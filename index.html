@@ -6,6 +6,8 @@
 
 <style>
 
+
+	/*Иницализаци стилей*/
 	body{
 		background-color:#e5e7ff;
 	}
@@ -14,7 +16,237 @@
 		margin-right:10px;
 	}
 
+	table td{
+		padding:5px;
+	}
+
+	input[type="button"] {
+		cursor:pointer;
+	} 
+
+
+	/*Окно добавления задачи*/
+	.overlay {
+	    background-color: rgba(0, 0, 0, 0.7);
+	    bottom: 0;
+	    cursor: default;
+	    left: 0;
+	    opacity: 0;
+	    position: fixed;
+	    right: 0;
+	    top: 0;
+	    visibility: hidden;
+	    z-index: 99999;
+			-webkit-transition: opacity .5s;
+			-moz-transition: opacity .5s;
+			-ms-transition: opacity .5s;
+			-o-transition: opacity .5s;
+			transition: opacity .5s;
+	}
+	.popup {
+		background-color: #fff;
+		border: 3px solid #fff;
+		display: inline-block;
+		left: 50%;
+		opacity: 0;
+		/*padding: 15px;*/
+		padding: 45px;
+		/*width: 300px;*/
+		width: 594px;
+		/*height: 323px;*/
+		height: 400px;
+		position: fixed;
+		text-align: justify;
+		top: 40%;
+		visibility: hidden;
+		z-index: 999999;
+		-webkit-transform: translate(-50%, -50%);
+		-moz-transform: translate(-50%, -50%);
+		-ms-transform: translate(-50%, -50%);
+		-o-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		-webkit-transition: opacity .5s, top .5s;
+		-moz-transition: opacity .5s, top .5s;
+		-ms-transition: opacity .5s, top .5s;
+		-o-transition: opacity .5s, top .5s;
+		transition: opacity .5s, top .5s;
+		border-radius: 11px;
+	}
+	.popup .close_window {
+		font-size: 13px;
+		display: block;
+		width: 6px;
+		height: 17px;
+		position: absolute;
+		padding: 1px 9px 4px 9px;
+		top: -15px;
+		right: -15px;
+		cursor: pointer;
+		color: #fff;
+		font-family: 'tahoma', sans-serif;
+		background: -webkit-gradient(linear, left top, right top, from(#3d51c8), to(#051fb8));
+		background: -webkit-linear-gradient(top, #3d51c8, #051fb8);
+		background: -moz-linear-gradient(top, #3d51c8, #051fb8);
+		background: -o-linear-gradient(top, #3d51c8, #051fb8);
+		background: -ms-linear-gradient(top, #3d51c8, #051fb8);
+		background: linear-gradient(top, #3d51c8, #051fb8);
+		background-color: #3d51c8;
+		border: 1px solid #061fb8;
+		-webkit-border-radius: 50%;
+		-moz-border-radius: 50%;
+		-o-border-radius: 50%;
+		-ms-border-radius: 50%;
+		border-radius: 50%;
+		text-align: center;
+		box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.5);
+	}
+	
+	.popup .close_window:hover {
+		background: -webkit-gradient(linear, left top, right top, from(#051fb8), to(#3d51c8));
+		background: -webkit-linear-gradient(top, #051fb8, #3d51c8);
+		background: -moz-linear-gradient(top, #ff5f0, #3d51c87);
+		background: -o-linear-gradient(top, #051fb8, #3d51c8);
+		background: -ms-linear-gradient(top, #051fb8, #3d51c8);
+		background: linear-gradient(top, #051fb8, #3d51c8);
+		background-color: #051fb8;
+		border: 1px solid #00385E;
+	}
+	
+	.popup .close_window:active {
+		background: #8f9be0;
+	}
+
+
+	/*Окно добавления задачи*/
+	.overlay2 {
+	    background-color: rgba(0, 0, 0, 0.7);
+	    bottom: 0;
+	    cursor: default;
+	    left: 0;
+	    opacity: 0;
+	    position: fixed;
+	    right: 0;
+	    top: 0;
+	    visibility: hidden;
+	    z-index: 99999;
+			-webkit-transition: opacity .5s;
+			-moz-transition: opacity .5s;
+			-ms-transition: opacity .5s;
+			-o-transition: opacity .5s;
+			transition: opacity .5s;
+	}
+	.popup2 {
+		background-color: #fff;
+		border: 3px solid #fff;
+		display: inline-block;
+		left: 50%;
+		opacity: 0;
+		/*padding: 15px;*/
+		padding: 45px;
+		/*width: 300px;*/
+		width: 594px;
+		/*height: 323px;*/
+		height: 400px;
+		position: fixed;
+		text-align: justify;
+		top: 40%;
+		visibility: hidden;
+		z-index: 999999;
+		-webkit-transform: translate(-50%, -50%);
+		-moz-transform: translate(-50%, -50%);
+		-ms-transform: translate(-50%, -50%);
+		-o-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		-webkit-transition: opacity .5s, top .5s;
+		-moz-transition: opacity .5s, top .5s;
+		-ms-transition: opacity .5s, top .5s;
+		-o-transition: opacity .5s, top .5s;
+		transition: opacity .5s, top .5s;
+		border-radius: 11px;
+	}
+	.popup2 .close_window2 {
+		font-size: 13px;
+		display: block;
+		width: 6px;
+		height: 17px;
+		position: absolute;
+		padding: 1px 9px 4px 9px;
+		top: -15px;
+		right: -15px;
+		cursor: pointer;
+		color: #fff;
+		font-family: 'tahoma', sans-serif;
+		background: -webkit-gradient(linear, left top, right top, from(#3d51c8), to(#051fb8));
+		background: -webkit-linear-gradient(top, #3d51c8, #051fb8);
+		background: -moz-linear-gradient(top, #3d51c8, #051fb8);
+		background: -o-linear-gradient(top, #3d51c8, #051fb8);
+		background: -ms-linear-gradient(top, #3d51c8, #051fb8);
+		background: linear-gradient(top, #3d51c8, #051fb8);
+		background-color: #3d51c8;
+		border: 1px solid #061fb8;
+		-webkit-border-radius: 50%;
+		-moz-border-radius: 50%;
+		-o-border-radius: 50%;
+		-ms-border-radius: 50%;
+		border-radius: 50%;
+		text-align: center;
+		box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.5);
+	}
+	
+	.popup2 .close_window2:hover {
+		background: -webkit-gradient(linear, left top, right top, from(#051fb8), to(#3d51c8));
+		background: -webkit-linear-gradient(top, #051fb8, #3d51c8);
+		background: -moz-linear-gradient(top, #ff5f0, #3d51c87);
+		background: -o-linear-gradient(top, #051fb8, #3d51c8);
+		background: -ms-linear-gradient(top, #051fb8, #3d51c8);
+		background: linear-gradient(top, #051fb8, #3d51c8);
+		background-color: #051fb8;
+		border: 1px solid #00385E;
+	}
+	
+	.popup2 .close_window:2active {
+		background: #8f9be0;
+	}
+
+
+
 </style>
+
+
+<script type="text/javascript" src="js/jquery.min.js" ></script>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		/*Окно добавления задачи*/
+		$('.popup .close_window, .overlay').click(function (){
+			$('.popup, .overlay').css({'opacity':'0', 'visibility':'hidden'});
+		});
+		//$('a.open_window').click(function (e){
+		$('.open_window').click(function (e){
+
+			$('.popup, .overlay').css({'opacity':'1', 'visibility':'visible'});
+			e.preventDefault();
+		});
+
+
+		/*Окно редактирования задачи*/
+		$('.popup2 .close_window2, .overlay2').click(function (){
+			$('.popup2, .overlay2').css({'opacity':'0', 'visibility':'hidden'});
+		});
+		//$('a.open_window').click(function (e){
+		$('.open_window2').click(function (e){
+
+			$('.popup2, .overlay2').css({'opacity':'1', 'visibility':'visible'});
+			e.preventDefault();
+		});
+
+	});
+
+</script>
+
 
 </head>
 
@@ -29,23 +261,71 @@
 	<div align="left" style="width:1000px;background-color:#dce0ff;border: 1px solid #aaabad; padding:30px 20px 30px 20px;">
 
 		
-		<select name="select" multiple="multiple" style="width:278px;height:681px;">
+
+
+
+		<select name="select" multiple="multiple" style="width:462px;height:681px;">
 			<option selected="selected">Чебурашка</option>
 			<option>Крокодил Гена</option>
 			<option>Шапокляк</option>
 			<option>Крыса Лариса</option>
 		</select>
 
-		<textarea name="text" style="margin-left:30px;resize:none;width:680px;height:672px;position:relative;top:4px;">zz1z1z1</textarea>
+		<textarea name="text" style="margin-left:30px;resize:none;width:462px;height:672px;position:relative;top:4px;">zz1z1z1</textarea>
 
 		
-
 		<div style="background-color:#d3d8ff;border: 1px solid #aaabad;padding:24px;margin:30px 0 30px 0;">
 
-			<input type="button" value="Добавить" onclick="add_task();"><input type="button" value="Изменить" style="margin-right:36px;" onclick="edit_task();"><input type="button" value="Завершить" style="margin-right:59px;" onclick="complet_task();"><input type="button" value="Удалить" onclick="delete_task();">
+			<input type="button" value="Добавить" class="open_window"><input type="button" value="Изменить" style="margin-right:36px;" class="open_window2"><input type="button" value="Завершить" style="margin-right:59px;" onclick="complete_task();"><input type="button" value="Удалить" onclick="delete_task();">
 
 		<div>
 
+
+	</div>
+
+
+	<!--Окно добавления задачи-->
+	<div class="overlay" title="окно"></div>
+	<div class="popup">
+	<div class="close_window">x</div>
+
+		<table>
+			<tr>
+				<td>Название задачи</td>
+				<td><input id="task_add" type="text" style="width:400px;"></td>
+			</tr>
+			<tr>
+				<td>Текст задачи</td>
+				<td><textarea name="text" style="resize:none;width:400px;height:300px;"></textarea></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><input type="button" style="float:right;" value="Добавить"></td>
+			</tr>
+		</table>
+
+	</div>
+
+
+	<!--Окно редактирования задачи-->
+	<div class="overlay2" title="окно"></div>
+	<div class="popup2">
+	<div class="close_window2">x</div>
+		
+		<table>
+			<tr>
+				<td>Название задачи</td>
+				<td><input id="task_add" type="text" style="width:400px;"></td>
+			</tr>
+			<tr>
+				<td>Текст задачи</td>
+				<td><textarea name="text" style="resize:none;width:400px;height:300px;"></textarea></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><input type="button" style="float:right;" value="Изменить"></td>
+			</tr>
+		</table>
 
 	</div>
 
@@ -74,10 +354,10 @@
 
 	}
 
-	function complet_task()
+	function complete_task()
 	{
 
-		alert("complet_task");
+		alert("complete_task");
 
 	}
 

@@ -347,6 +347,10 @@
 <script>
 
 
+	//инициализация начальных значнений
+	initiation_data();
+
+
 
 	function add_task()
 	{
@@ -368,7 +372,7 @@
 		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
 		wiley_data_arr.push([ $.trim($("#add_task_title").val()) , $.trim($("#add_task_text").val()) , 0 ]);
 		localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
-		
+
 
 		load_tasks_list();
 
@@ -394,26 +398,97 @@
 	function complete_task()
 	{
 
-		alert("complete_task");
+
+		//проверка входных параметров
+		if($("#tasks_list").val() == null) 
+		{
+			alert("Вы не выбрали задачу для завершения!");
+			return;
+		}
+
+
+		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+		if(wiley_data_arr[ $("#tasks_list").val() ][ 2 ]==1)
+		{
+			alert("Эта задача уже является выполненной!");
+			return;
+		}
+
+
+		//завершение задачи
+		if( confirm("Вы действительно хотите отметить эту задачу как выполненную?") ) 
+		{
+			wiley_data_arr[ $("#tasks_list").val() ][ 2 ]=1;
+			localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
+
+			
+			//перезагрузка обновленного спика задач и восстановление указателя на выбранную задачу
+			i=$("#tasks_list").val();
+			load_tasks_list();
+			$("#tasks_list [value='"+i+"']").attr("selected", "selected");
+
+			wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+			$("#task_text").html(wiley_data_arr[i][1]);
+
+
+		}
+
 
 	}
 
 	function delete_task()
 	{
 
-		alert("delete_task");
+
+		/*
+		if( $("#tasks_list").size()==0 )
+		{
+			alert("список задач пуст!");
+			return;
+		}
+		*/
+
+
+		//проверка входных параметров
+		if($("#tasks_list").val() == null) 
+		{
+			alert("Вы не выбрали задачу для удаления!");
+			return;
+		}
+
+
+		//удаление задачи
+		if( confirm("Вы действительно хотите удалить эту задачу?") ) 
+		{
+			wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+			wiley_data_arr.splice( $("#tasks_list").val() , 1);
+			localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
+
+			load_tasks_list();
+		}
+
 
 	}
 
 
+	//загрузка текста задачи
+	$("#tasks_list").click(function(){
 
-	initiation_data();
+	    if($(this).val() == null) return false;
+	    //alert($(this).val());
+
+		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+		$("#task_text").html(wiley_data_arr[$(this).val()][1]);
+
+
+	});
+
 
 
 	function initiation_data()
 	{
 
-		//localStorage.removeItem("wiley_data_ls");
+		localStorage.removeItem("wiley_data_ls");
 
 		
 		if(localStorage.getItem('wiley_data_ls')==null)
@@ -425,32 +500,14 @@
 			wiley_data_arr.push(['Задача 1','Текст задачи 1',0]);
 			wiley_data_arr.push(['Задача 2','Текст задачи 2',0]);
 
-			//alert(wiley_data_arr[1]);
+			//delete wiley_data_arr[1];
 
 
 			localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
 
-
-
-			//a1=JSON.parse( localStorage.getItem('wiley_data_ls') );
-
-			//alert(a1[1]);
-
-			//alert("v44");
-
 		}
-		/*
-		else
-		{
-			wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
-			//alert(wiley_data_arr[1]);
-
-		}
-		*/
-
 
 		load_tasks_list();
-
 
 	}
 
@@ -461,24 +518,17 @@
 	function load_tasks_list()
 	{
 
-
 		$("#tasks_list").empty();
+		$("#task_text").html("");
 
 		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
 
 		wiley_data_arr.forEach(function(item, i, arr) {
 		  //alert( i + ": " + item + " (массив:" + arr + ")" );
 
-		  //if(+wiley_data_arr[i][2]==0)
-		  //{
-
-		  //}
-
-
 		  $("#tasks_list").append( $('<option value="'+i+'">'+wiley_data_arr[i][0]+' ( '+ ( wiley_data_arr[i][2]==0 ? 'не выполнена' : 'выполнена' ) + ' )</option>'));
 		
 		});
-
 
 	}
 
@@ -510,9 +560,6 @@
 	  }
 	  return arr;
 	}
-
-
-	//alert(localStorage.getItem('zz34'));
 
 
 

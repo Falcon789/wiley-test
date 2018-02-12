@@ -258,27 +258,36 @@
 
 
 
-	<div align="left" style="width:1000px;background-color:#dce0ff;border: 1px solid #aaabad; padding:30px 20px 30px 20px;">
+	<div align="left" style="width:1000px;background-color:#dce0ff;border: 1px solid #aaabad; padding:30px 20px 30px 20px;display:inline-block;">
 
 		
 
 
 
-		<select name="select" multiple="multiple" style="width:462px;height:681px;">
-			<option selected="selected">Чебурашка</option>
-			<option>Крокодил Гена</option>
-			<option>Шапокляк</option>
-			<option>Крыса Лариса</option>
-		</select>
+		
 
-		<textarea name="text" style="margin-left:30px;resize:none;width:462px;height:672px;position:relative;top:4px;">zz1z1z1</textarea>
+			
+			<div style="float:left;display:inline-block;">	
+				Список задач:<br/><br/>
+				<select id="tasks_list" name="select" multiple="multiple" style="width:348px;height:681px;overflow-x:auto;">
+				</select>
+			</div>
+
+			<div style="float:right;display:inline-block;">
+				<span style="">
+					Текст задачи:<br/><br/>
+					<textarea id="task_text" name="text" style="resize:none;width:609px;height:672px;" readonly></textarea>
+				</span>
+			</div>
+
 
 		
-		<div style="background-color:#d3d8ff;border: 1px solid #aaabad;padding:24px;margin:30px 0 30px 0;">
+		
+		<div style="width:951px;float:left;display:inline-block;background-color:#d3d8ff;border: 1px solid #aaabad;padding:24px;margin:30px 0 30px 0;">
 
 			<input type="button" value="Добавить" class="open_window"><input type="button" value="Изменить" style="margin-right:36px;" class="open_window2"><input type="button" value="Завершить" style="margin-right:59px;" onclick="complete_task();"><input type="button" value="Удалить" onclick="delete_task();">
 
-		<div>
+		</div>
 
 
 	</div>
@@ -292,15 +301,15 @@
 		<table>
 			<tr>
 				<td>Название задачи</td>
-				<td><input id="task_add" type="text" style="width:400px;"></td>
+				<td><input id="add_task_title" type="text" style="width:400px;"></td>
 			</tr>
 			<tr>
 				<td>Текст задачи</td>
-				<td><textarea name="text" style="resize:none;width:400px;height:300px;"></textarea></td>
+				<td><textarea id="add_task_text" name="text" style="resize:none;width:400px;height:300px;"></textarea></td>
 			</tr>
 			<tr>
 				<td></td>
-				<td><input type="button" style="float:right;" value="Добавить"></td>
+				<td><input type="button" style="float:right;" value="Добавить" onclick="add_task();"></td>
 			</tr>
 		</table>
 
@@ -342,7 +351,32 @@
 	function add_task()
 	{
 
-		alert("add_task");
+		//проверка входных параметров
+		if( $.trim($("#add_task_title").val()).length==0 )
+		{
+			alert("Название задачи не может быть пустым!");
+			return;
+		}
+
+		if( $.trim($("#add_task_text").val()).length==0 )
+		{
+			alert("Текст задачи не может быть пустым!");
+			return;
+		}
+
+		//добавление новой задачи в список
+		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+		wiley_data_arr.push([ $.trim($("#add_task_title").val()) , $.trim($("#add_task_text").val()) , 0 ]);
+
+
+		alert("Новая задача успешно добавлена!");
+		$('.popup .close_window').trigger('click');
+
+
+		//очистка полей формы
+		$.trim($("#add_task_title").val(""));
+		$.trim($("#add_task_text").val(""));
+
 
 	}
 
@@ -367,6 +401,113 @@
 		alert("delete_task");
 
 	}
+
+
+
+	initiation_data();
+
+
+	function initiation_data()
+	{
+
+		localStorage.removeItem("wiley_data_ls");
+
+		
+		if(localStorage.getItem('wiley_data_ls')==null)
+		{
+			
+			var wiley_data_arr=matrixArray(1,3);
+			wiley_data_arr.splice(0,1);
+
+			wiley_data_arr.push(['Задача 1','Текст задачи 1',0]);
+			wiley_data_arr.push(['Задача 2','Текст задачи 2',0]);
+
+			//alert(wiley_data_arr[1]);
+
+
+			localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
+
+
+
+			//a1=JSON.parse( localStorage.getItem('wiley_data_ls') );
+
+			//alert(a1[1]);
+
+			//alert("v44");
+
+		}
+		/*
+		else
+		{
+			wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+			//alert(wiley_data_arr[1]);
+
+		}
+		*/
+
+
+		load_tasks_list();
+
+
+	}
+
+
+	
+
+	//загрузка списка задач
+	function load_tasks_list()
+	{
+
+		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+
+		wiley_data_arr.forEach(function(item, i, arr) {
+		  //alert( i + ": " + item + " (массив:" + arr + ")" );
+
+		  //if(+wiley_data_arr[i][2]==0)
+		  //{
+
+		  //}
+
+
+		  $("#tasks_list").append( $('<option value="'+i+'">'+wiley_data_arr[i][0]+' ( '+ ( wiley_data_arr[i][2]==0 ? 'не выполнена' : 'выполнена' ) + ' )</option>'));
+		
+		});
+
+
+	}
+
+
+
+	//загрузка текста задачи
+	$("#tasks_list").click(function(){
+
+	    if($(this).val() == null) return false;
+	    //alert($(this).val());
+
+		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+		$("#task_text").html(wiley_data_arr[$(this).val()][1]);
+
+
+	});
+
+
+
+
+	function matrixArray(rows,columns){
+	  var arr = new Array();
+	  for(var i=0; i<rows; i++){
+	    arr[i] = new Array();
+	    for(var j=0; j<columns; j++){
+	      //arr[i][j] = i+j+1;//вместо i+j+1 пишем любой наполнитель. В простейшем случае - null
+	      arr[i][j] = "";//вместо i+j+1 пишем любой наполнитель. В простейшем случае - null
+	    }
+	  }
+	  return arr;
+	}
+
+
+	//alert(localStorage.getItem('zz34'));
+
 
 
 </script>

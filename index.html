@@ -209,7 +209,6 @@
 	}
 
 
-
 </style>
 
 
@@ -220,13 +219,18 @@
 
 	$(document).ready(function(){
 
+
 		/*Окно добавления задачи*/
 		$('.popup .close_window, .overlay').click(function (){
+
+			//очистка полей формы
+			$("#add_task_title").val("");
+			$("#add_task_text").val("");
+
 			$('.popup, .overlay').css({'opacity':'0', 'visibility':'hidden'});
 		});
 		//$('a.open_window').click(function (e){
 		$('.open_window').click(function (e){
-
 			$('.popup, .overlay').css({'opacity':'1', 'visibility':'visible'});
 			e.preventDefault();
 		});
@@ -234,14 +238,33 @@
 
 		/*Окно редактирования задачи*/
 		$('.popup2 .close_window2, .overlay2').click(function (){
+
+			//очистка полей формы
+			$("#edit_task_title").val("");
+			$("#edit_task_text").val("");
+
 			$('.popup2, .overlay2').css({'opacity':'0', 'visibility':'hidden'});
 		});
 		//$('a.open_window').click(function (e){
 		$('.open_window2').click(function (e){
 
+			//проверка выбрана ли задача для редактирования
+			if($("#tasks_list").val() == null) 
+			{
+				alert("Вы не выбрали задачу для редактирования!");
+				return;
+			}
+
+			//загрузка редактируемых значений
+			wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+
+			$("#edit_task_title").val( wiley_data_arr[$("#tasks_list").val()][0] );
+			$("#edit_task_text").val( wiley_data_arr[$("#tasks_list").val()][1] );
+
 			$('.popup2, .overlay2').css({'opacity':'1', 'visibility':'visible'});
 			e.preventDefault();
 		});
+
 
 	});
 
@@ -253,20 +276,10 @@
 <body>
 
 
-
 <div align="center">
 
-
-
 	<div align="left" style="width:1000px;background-color:#dce0ff;border: 1px solid #aaabad; padding:30px 20px 30px 20px;display:inline-block;">
-
 		
-
-
-
-		
-
-			
 			<div style="float:left;display:inline-block;">	
 				Список задач:<br/><br/>
 				<select id="tasks_list" name="select" multiple="multiple" style="width:348px;height:681px;overflow-x:auto;">
@@ -279,16 +292,12 @@
 					<textarea id="task_text" name="text" style="resize:none;width:609px;height:672px;" readonly></textarea>
 				</span>
 			</div>
-
-
 		
-		
-		<div style="width:951px;float:left;display:inline-block;background-color:#d3d8ff;border: 1px solid #aaabad;padding:24px;margin:30px 0 30px 0;">
+			<div style="width:951px;float:left;display:inline-block;background-color:#d3d8ff;border: 1px solid #aaabad;padding:24px;margin:30px 0 30px 0;">
 
-			<input type="button" value="Добавить" class="open_window"><input type="button" value="Изменить" style="margin-right:36px;" class="open_window2"><input type="button" value="Завершить" style="margin-right:59px;" onclick="complete_task();"><input type="button" value="Удалить" onclick="delete_task();">
+				<input type="button" value="Добавить" class="open_window"><input type="button" value="Изменить" style="margin-right:36px;" class="open_window2"><input type="button" value="Завершить" style="margin-right:59px;" onclick="complete_task();"><input type="button" value="Удалить" onclick="delete_task();">
 
-		</div>
-
+			</div>
 
 	</div>
 
@@ -324,20 +333,19 @@
 		<table>
 			<tr>
 				<td>Название задачи</td>
-				<td><input id="task_add" type="text" style="width:400px;"></td>
+				<td><input id="edit_task_title" type="text" style="width:400px;"></td>
 			</tr>
 			<tr>
 				<td>Текст задачи</td>
-				<td><textarea name="text" style="resize:none;width:400px;height:300px;"></textarea></td>
+				<td><textarea id="edit_task_text" name="text" style="resize:none;width:400px;height:300px;"></textarea></td>
 			</tr>
 			<tr>
 				<td></td>
-				<td><input type="button" style="float:right;" value="Изменить"></td>
+				<td><input type="button" style="float:right;" value="Изменить"  onclick="edit_task();"></td>
 			</tr>
 		</table>
 
 	</div>
-
 
 
 </div>
@@ -368,9 +376,21 @@
 			return;
 		}
 
-		//добавление новой задачи в список
+		//проверка задачи на существование в списке
 		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+		if( find_array_element(wiley_data_arr,$.trim($("#add_task_title").val()))!=-1 )
+		{
+			alert("Задача с таким названием уже существует!");
+			return;
+		}
+
+
+		//добавление новой задачи в список
 		wiley_data_arr.push([ $.trim($("#add_task_title").val()) , $.trim($("#add_task_text").val()) , 0 ]);
+		//сортировка массива по названию задачи
+		wiley_data_arr = wiley_data_arr.sort(function (a, b) {
+		    return (a[0] > b[0])
+		});
 		localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
 
 
@@ -379,25 +399,58 @@
 		alert("Новая задача успешно добавлена!");
 		$('.popup .close_window').trigger('click');
 
-
-		//очистка полей формы
-		$.trim($("#add_task_title").val(""));
-		$.trim($("#add_task_text").val(""));
-
-
 	}
 
 
 	function edit_task()
 	{
 
-		alert("edit_task");
+		//проверка входных параметров
+		if( $.trim($("#edit_task_title").val()).length==0 )
+		{
+			alert("Название задачи не может быть пустым!");
+			return;
+		}
+
+		if( $.trim($("#edit_task_text").val()).length==0 )
+		{
+			alert("Текст задачи не может быть пустым!");
+			return;
+		}
+
+
+
+		//добавление отредактированной задачи в список
+		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+
+		//wiley_data_arr.push([ $.trim($("#add_task_title").val()) , $.trim($("#add_task_text").val()) , 0 ]);
+
+		wiley_data_arr[ $("#tasks_list").val() ][ 0 ]=$.trim($("#edit_task_title").val());
+		wiley_data_arr[ $("#tasks_list").val() ][ 1 ]=$.trim($("#edit_task_text").val());
+
+		//сортировка массива по названию задачи
+		wiley_data_arr = wiley_data_arr.sort(function (a, b) {
+		    return (a[0] > b[0])
+		});
+
+		localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
+
+
+
+		//перезагрузка обновленного спика задач и восстановление указателя на выбранную задачу
+		i=$("#tasks_list").val();
+		load_tasks_list();
+		$("#tasks_list [value='"+i+"']").attr("selected", "selected");
+		$('#tasks_list').trigger('click');
+
+
+		alert("Задача успешно отредактирована!");
+		$('.popup2 .close_window2').trigger('click');
 
 	}
 
 	function complete_task()
 	{
-
 
 		//проверка входных параметров
 		if($("#tasks_list").val() == null) 
@@ -406,8 +459,8 @@
 			return;
 		}
 
-
 		wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
+
 		if(wiley_data_arr[ $("#tasks_list").val() ][ 2 ]==1)
 		{
 			alert("Эта задача уже является выполненной!");
@@ -429,25 +482,12 @@
 
 			wiley_data_arr=JSON.parse( localStorage.getItem('wiley_data_ls') );
 			$("#task_text").html(wiley_data_arr[i][1]);
-
-
 		}
-
 
 	}
 
 	function delete_task()
 	{
-
-
-		/*
-		if( $("#tasks_list").size()==0 )
-		{
-			alert("список задач пуст!");
-			return;
-		}
-		*/
-
 
 		//проверка входных параметров
 		if($("#tasks_list").val() == null) 
@@ -466,7 +506,6 @@
 
 			load_tasks_list();
 		}
-
 
 	}
 
@@ -487,22 +526,13 @@
 
 	function initiation_data()
 	{
-
-		localStorage.removeItem("wiley_data_ls");
-
 		
 		if(localStorage.getItem('wiley_data_ls')==null)
 		{
 			
 			var wiley_data_arr=matrixArray(1,3);
 			wiley_data_arr.splice(0,1);
-
-			wiley_data_arr.push(['Задача 1','Текст задачи 1',0]);
-			wiley_data_arr.push(['Задача 2','Текст задачи 2',0]);
-
-			//delete wiley_data_arr[1];
-
-
+	
 			localStorage.setItem('wiley_data_ls', JSON.stringify(wiley_data_arr) );
 
 		}
@@ -510,8 +540,6 @@
 		load_tasks_list();
 
 	}
-
-
 	
 
 	//загрузка списка задач
@@ -533,7 +561,6 @@
 	}
 
 
-
 	//загрузка текста задачи
 	$("#tasks_list").click(function(){
 
@@ -545,8 +572,6 @@
 
 
 	});
-
-
 
 
 	function matrixArray(rows,columns){
@@ -562,11 +587,19 @@
 	}
 
 
+	function find_array_element(arr, value) {
+	    for (var i = 0; i < arr.length; i++) 
+	    {
+	        if (arr[i][0] == value)
+	        {
+	            return i;
+	        }
+		}
+		return -1;
+	}
+
 
 </script>
-
-
-
 
 
 
